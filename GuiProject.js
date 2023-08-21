@@ -200,9 +200,8 @@ useEffect(() => {
 
   
     return (
-      <div style={{ height: '500px', width: '1000px', background: 'rgb(55 65 81)', color: 'white', textColor:'white'}}>
-      <div ref={ganttContainerRef}>
-      <svg>
+      <div ref={ganttContainerRef} style={{ height: '500px', width: '1000px', background: 'rgb(55 65 81)', color: 'white', textColor:'white'}}>
+
       <g ref={scrollGroupRef}>
       <ResponsiveLine
         data={chartData}
@@ -267,9 +266,8 @@ useEffect(() => {
         }}
       />
        </g>
-      </svg>
+       
       </div>
-    </div>
     );
   };
 

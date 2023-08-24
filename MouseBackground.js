@@ -3,20 +3,20 @@ import './MouseBackground.css';
 
 const MouseBackground = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
+//position cursor
   const handleMouseMove = (e) => {
     const offsetX = e.clientX - window.innerWidth / 2;
     const offsetY = e.clientY - window.innerHeight / 2;
     setMousePosition({ x: offsetX / 1, y: offsetY / 1 }); // Adjust the divisor as needed
   };
-
+//sett move 
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
-
+//style and translate
   const backgroundImageStyle = {
     position: 'fixed',
     top: `${mousePosition.y}px`,

@@ -1,17 +1,22 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { select} from "d3-selection";
 import { zoom, zoomTransform} from "d3-zoom";
 import { ResponsiveLine } from '@nivo/line';
+import './Style.css';
+import MouseBackground from './MouseBackground';
+import clickSound from './audioclick.mp3';
+import { useTooltip } from "@nivo/tooltip";
+export default function Main() {
 
-export default function Inicio() {
+  const MyChart2 = ()  => {
 
-  const MyChart2 = () => {
-    
-    
+    //variables 
+    const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
+    const [tooltipVisible, setTooltipVisible] = useState(false);
+    const [tooltipData, setTooltipData] = useState(null);
     const scrollGroupRef = useRef();
     const ganttContainerRef = useRef();
-
     const defaultTranslate = 0;
     const yAxisWidth = 50;
     const lineWidth = 2; 
@@ -21,6 +26,8 @@ export default function Inicio() {
     const startYRef = useRef(0);
     const isXPanRef = useRef(false);
     const isYPanRef = useRef(false);
+
+    //Code of Zomm
 
     const onZoom = (event, scrollGroup, ganttContainer) => {
   
@@ -55,8 +62,6 @@ export default function Inicio() {
       .on("wheel.zoom", () => {
         onZoom(event, scrollGroup, ganttContainer);
       });
-
-
    
   };
         
@@ -107,6 +112,8 @@ useEffect(() => {
   const scrollGroup = select(scrollGroupRef.current);
   const ganttContainer = ganttContainerRef.current;
 
+  
+
   const d3Zoom = zoom()
     .scaleExtent([1, 10])
     .on("zoom", (event) => {
@@ -122,106 +129,181 @@ useEffect(() => {
   scrollGroup.attr("transform", `translate(${defaultTranslate}, 0)`);
 }, []);
 
+  //BD
     const chartData = [
       {
-          id: 'positive :)',
+          id: 'negative :)',
           data: [
-            { x: 0, y: 0.7 },
-            { x: 1, y: 0.9 },
-            { x: 2, y: 0.8 },
-            { x: 10, y: -0.8 },
-            { x: 16, y: 0.4 },
-            { x: 17, y: 0 },
-            { x: 18, y: 0.6 },
-            { x: 21, y: 0.5 },
-            { x: 22, y: 0.7 },
-            { x: 23, y: 0.9 },
-            { x: 24, y: 0.8 },
-            { x: 25, y: -0.8 },
-            { x: 26, y: 0.4 },
-            { x: 27, y: 0 },
-            { x: 28, y: 0.6 },
-            { x: 31, y: 0.5 },
+            { x: 0, y: 10 },
+            { x: 1, y: 10 },
+            { x: 2, y: 10 },
+            { x: 10, y: 2 },
+            { x: 16, y: 10 },
+            { x: 17, y: 2 },
+            { x: 18, y: 10},
+            { x: 21, y: 10 },
+            { x: 22, y: 2 },
+            { x: 23, y: 10},
+            { x: 24, y: 10 },
+            { x: 25, y: 10},
+            { x: 26, y: 2},
+            { x: 27, y: 10 },
+            { x: 28, y: 2},
+            { x: 31, y: 10 },
   
   
           ],
         },
         {
-          id: 'negative :(',
+          id: 'positive :(',
           data: [
-           { x: 0, y: -0.6 },
-            { x: 3, y: -0.5 },
-            { x: 5, y: 0.5 },
-            { x: 6, y: -0.3 },
-            { x: 7, y: -0.5 },
-            { x: 18, y: -0.4 },
-            { x: 19, y: -0.2 },
-            { x: 20, y: -0.1 },
-            { x: 21, y: -0.5 },
-            { x: 22, y: -0.6 },
-            { x: 23, y: -0.5 },
-            { x: 25, y: 0.5 },
-            { x: 26, y: -0.3 },
-            { x: 27, y: -0.5 },
-            { x: 28, y: -0.4 },
-            { x: 29, y: -0.2 },
-            { x: 30, y: -0.1 },
-            { x: 31, y: -0.5 },
+           { x: 0, y: -10 },
+            { x: 3, y: -2 },
+            { x: 5, y: -10 },
+            { x: 6, y: -2},
+            { x: 7, y: -10},
+            { x: 18, y: -10 },
+            { x: 19, y: -10 },
+            { x: 20, y: -10 },
+            { x: 21, y: -2 },
+            { x: 22, y: -10 },
+            { x: 23, y: -2 },
+            { x: 25, y: -10},
+            { x: 26, y: -10 },
+            { x: 27, y: -2 },
+            { x: 28, y: -10 },
+            { x: 29, y: -10 },
+            { x: 30, y: -2 },
+            { x: 31, y: -10 },
             
           ],
         },
     ];
-  
-    const handlePointClick = (event, point) => {
-      console.log("TOOLTIP FOI CLICADO");
-      console.log("Ponto clicado:", point);
+
+  //New Tooltip 
+
+  const renderTooltip = useMemo(
+    () => () => {
+      if (tooltipData) {
+        return (
+          <div>
+            {<div
+ 
+              style={{
+              background: 'rgba(128, 128, 128, 0.9)',
+              color: '#fff',
+              padding: '8px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              border: '2px solid #333', 
+              boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.5)',
+              cursor:'none',
+
+              }}
+              >
+            <div>
+            <div><p><p>Opening time: Ms</p></p></div>
+            <div><p>Runtime: Ms</p></div>
+            <div><p>Profit: Points</p></div>
+            <div><p>Profit:  $</p></div>
+            <div><p>Stop Loss: Points</p></div>
+            <div><p>Stop Loss: $</p></div>
+            <div><p> &Delta;P:</p></div>
+            <div><p>Ticket:</p></div>
+            </div>
+            </div>
+              }
+            </div>
+              );
+              }
+            return null;
+              },[tooltipData]);
+
+    //Hand Set false the tooltip
+      
+    const handleMouseLeave = useCallback(() => {
+      hideTooltip();
+      setTooltipVisible(false);
+      setTooltipData(null);
+    }, [hideTooltip]);
+
+    
+    //Point Symbol
+    const renderPointSymbol = ({ x, y, size, color }) => {
+      const adjustedX = x + 5; 
+      const adjustedY = y - 10; 
+
+      return (
+        <circle
+          cx={adjustedX}
+          cy={adjustedY}
+          r={size}
+          fill={color}
+          stroke="black"
+        />
+      );
     };
 
-    const CustomTooltip = ({ point }) => (
-      <div
-        style={{
-      background: 'rgba(128, 128, 128, 0.9)',
-        color: '#fff',
-        padding: '8px',
-        borderRadius: '4px',
-        fontSize: '14px',
-        border: '2px solid #333', 
-        boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.5)',  
-        }}
-      >
-        <div>This is the X: {point.data.x}</div>
-        <div>This is the Y: {point.data.y}</div>
-        <div>This is a buy: {point.data.y}</div>
-        <div>This is a sell: {point.data.y}</div>
-  
-      </div>
-    );
+    //Audio Player
+    const [playAudio, setPlayAudio] = useState(false);
+    useEffect(() => {
+      if (playAudio) {
+        const audio = new Audio(clickSound); 
+        audio.play(); 
+        setPlayAudio(false); 
+      }
+    }, [playAudio]);
+    
+    //Click Call Tooltip
+  const handlePointClick = useCallback(
+  (point, event) => {
+    console.log("TOOLTIP FOI CLICADO");
+    console.log("Ponto clicado:", point);
+    setPlayAudio(true);
 
+    if (tooltipVisible && tooltipData === point) {
+      // if the smae point are click
+      hideTooltip();
+      setTooltipVisible(false);
+      setTooltipData(null);
+    } else {
+      // if a new point are click
+      setTooltipVisible(true);
+      setTooltipData(point);
+      showTooltipFromEvent(renderTooltip(), event);
+    }
+  },
+  [tooltipVisible, tooltipData, hideTooltip, showTooltipFromEvent, renderTooltip]
+);
 
-  
+    //Create line
+    
     return (
-      <div ref={ganttContainerRef} style={{ height: '500px', width: '1000px', background: 'rgb(55 65 81)', color: 'white', textColor:'white'}}>
-
+      <div  ref={ganttContainerRef} style={{ height: '500px', width: '1000px', background: 'rgb(55 65 81)', color: 'white', textColor:'white'}}>
       <g ref={scrollGroupRef}>
       <ResponsiveLine
+      
         data={chartData}
         margin={{ top: 20, right: 120, bottom: 60, left: 120 }}
         xScale={{ type: 'linear' }}
-        yScale={{ type: 'linear', min: -2, max: 2, stacked: false }}
+        yScale={{ type: 'linear', min: -10, max: 10, stacked: false }}
         curve="linear"
-        colors={['rgb(97, 205, 187)', 'rgb(244, 117, 96)']}
-        pointSize={14}
+        colors={['rgb(244, 117, 96)', 'rgb(97, 205, 187)']}
+        pointSymbol={(props) => renderPointSymbol(props)}
+        pointSize={8}
         pointBorderWidth={1}
         enableGridX
         gridYValues={[0,2,-2]}
         pointBorderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
-        pointLabelYOffset={-20}
+        pointLabelYOffset={-15}
         enablePointLabel
+        enableCrosshair={false}
         enableArea
-        tooltip={CustomTooltip}
+        tooltip={renderTooltip}
         useMesh
         animate
-        onClick={handlePointClick}
+        onClick={(point, event) => handlePointClick(point, event)}
+        onMouseLeave={handleMouseLeave}
         axisLeft={false}
         enablePan={true}
         axisRight={{
@@ -253,6 +335,7 @@ useEffect(() => {
               stroke: 'rgba(255, 255, 255, 0.1)',
               color:'white',
               strokeWidth: 3,
+              cursor:'none',
             },
           },
           legends: {
@@ -263,20 +346,27 @@ useEffect(() => {
                 color:'white',
               },
             },
+            
         }}
-      />
-       </g>
-       
+      >
+      </ResponsiveLine>
+        </g>
+        //Mouse Editor
+        <MouseBackground></MouseBackground> 
       </div>
     );
   };
 
-
+  //Call All
   return (
   
-    <div>
+    <main>
+      <div>
+	      </div>
           <MyChart2></MyChart2>
-    </div>
+      <div>
+      </div>
+    </main>
 
   )
 }

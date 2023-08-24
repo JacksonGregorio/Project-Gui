@@ -1,0 +1,15 @@
+.background-image {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: url('glove.png');
+    background-size: cover;
+    pointer-events: none;
+    cursor: none;
+    z-index: 10;
+  }
+
+div{
+    cursor: none;
+}
+
